@@ -13,7 +13,7 @@ function App() {
   const [notes, setNotes] = useState([]);
   const [user, setUser] = useState(null); //store logged-in users
   const backendUrl = process.env.NODE_ENV === "production"
-  ? "https://todolist-nonb.onrender.com"
+  ? "https://todolist-kbuf.onrender.com"
   : "http://localhost:3000";  //local testing 
 
   // fetch user session on mount

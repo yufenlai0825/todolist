@@ -5,9 +5,12 @@ import { useNavigate } from "react-router-dom";
 function Header() {
   const [user ,setUser] = useState(""); 
   const navigate = useNavigate(); 
+  const backendUrl = process.env.NODE_ENV === "production"
+  ? "https://todolist-kbuf.onrender.com"
+  : "http://localhost:3000";  //local testing
 
   const handleLogout = async () => {
-    await fetch("/logout", { credentials: "include" });
+    await fetch(`${backendUrl}/logout`, { credentials: "include" });
     setUser(null);
     navigate("/");
   };

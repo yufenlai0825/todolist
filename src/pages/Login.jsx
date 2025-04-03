@@ -15,7 +15,7 @@ function Login({setUser}) {
 
   // for all backend API calls
   const backendUrl = process.env.NODE_ENV === "production"
-  ? "https://todolist-nonb.onrender.com"
+  ? "https://todolist-kbuf.onrender.com"
   : "http://localhost:3000";  //local testing
 
   const handleSignIn = async (event) => {
@@ -49,7 +49,7 @@ function Login({setUser}) {
 
     function handleGoogleSignIn (){
       const backendUrl = process.env.NODE_ENV === "production"
-      ? "https://todolist-nonb.onrender.com/auth/google"
+      ? "hhttps://todolist-kbuf.onrender.com/auth/google"
       : "http://localhost:3000/auth/google";
       
       window.location.href = backendUrl;
