@@ -2,6 +2,7 @@ import express from "express";
 import session from "express-session"; 
 import cors from "cors"; 
 import path from "path"; 
+import { fileURLToPath } from "url"; 
 import pg from "pg"; 
 import pgSession from "connect-pg-simple"; 
 import bcrypt from "bcrypt"; 
@@ -23,6 +24,8 @@ const corsOptions = {
   origin: ["http://localhost:5173", "https://todolist-frontend-vlgb.onrender.com"], // allow both local and deployed frontend
   credentials: true // allow cookies & authentication headers
 };
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename); //ESM does not support it like COMMON JS
 env.config();
 
 app.use(cors(corsOptions)); // during dev allow web pages making requests across different origins
