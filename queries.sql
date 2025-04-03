@@ -1,0 +1,13 @@
+CREATE TABLE listusers(
+id SERIAL PRIMARY KEY,
+name VARCHAR(255),
+email VARCHAR(255) UNIQUE,
+password TEXT
+)
+
+CREATE TABLE notes(
+id SERIAL PRIMARY KEY,
+user_id INTEGER REFERENCES listusers(id) ON DELETE CASCADE,
+title TEXT,
+content TEXT
+)
