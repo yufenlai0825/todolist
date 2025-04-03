@@ -1,12 +1,17 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import path from "path"; 
 
-// https://vite.dev/config/
-// export default defineConfig({
-//   plugins: [react()],
-// })
+// export default {
+//   build: {
+//     outDir: './dist',  \
+//   },
+// };
+
 export default {
   build: {
-    outDir: '../dist',  // Output build to the root dist folder
+    // Specify the output directory relative to the project root
+    outDir: path.resolve(__dirname, 'dist'),  // Use absolute path for safety
+    rollupOptions: {
+      input: path.resolve(__dirname, 'index.html'),  // Specify the correct entry file
+    },
   },
 };
