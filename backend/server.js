@@ -1,6 +1,7 @@
 import express from "express"; 
 import session from "express-session"; 
 import cors from "cors"; 
+import path from "path"; 
 import pg from "pg"; 
 import pgSession from "connect-pg-simple"; 
 import bcrypt from "bcrypt"; 
@@ -22,7 +23,6 @@ const corsOptions = {
   origin: ["http://localhost:5173", "https://todolist-frontend-vlgb.onrender.com"], // allow both local and deployed frontend
   credentials: true // allow cookies & authentication headers
 };
-const path = require("path");
 env.config();
 
 app.use(cors(corsOptions)); // during dev allow web pages making requests across different origins
