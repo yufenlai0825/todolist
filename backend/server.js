@@ -21,7 +21,7 @@ const db = new pg.Pool({
 });
 const isProduction = process.env.NODE_ENV === "production"; //for dev testing, add secure and httpOnly inside cookie
 const corsOptions = {
-  origin: ["http://localhost:5173", "https://todolist-frontend-vlgb.onrender.com"], // allow both local and deployed frontend
+  origin: ["http://localhost:5173", "https://todolist-frontend-vlgb.onrender.com"], // allow both local and frontend URL
   credentials: true // allow cookies & authentication headers
 };
 const __filename = fileURLToPath(import.meta.url);

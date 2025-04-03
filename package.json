@@ -7,8 +7,6 @@
     "dev": "vite",
     "build": "vite build",
     "start": "node backend/server.js",
-    "frontend-build": "vite build",
-    "backend-start": "node backend/server.js", 
     "lint": "eslint .",
     "preview": "vite preview"
   },
