@@ -12,7 +12,7 @@ import GoogleStrategy from "passport-google-oauth2";
 import env from "dotenv"; 
 
 const app = express(); 
-const port = 3000; 
+const port = process.env.PORT || 3000; //alternatively use Render's assigned port
 const saltRounds = 10; 
 const PgSession = pgSession(session); 
 const db = new pg.Pool({  
