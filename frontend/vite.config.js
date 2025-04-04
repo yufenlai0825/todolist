@@ -12,9 +12,9 @@ export default defineConfig({
     server: {
       proxy: {
         '/api': {
-          target: process.VITE_BACKEND_URL || 'http://localhost:3000', // backend port
+          target: import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000', // backend port
           changeOrigin: true,
-          secure: false,
+          secure: import.meta.env.MODE === 'production',
         },
       },
     },
