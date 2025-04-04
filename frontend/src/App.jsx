@@ -46,7 +46,7 @@ useEffect(() => {
       method: "POST", 
       headers: {"Content-Type": "application/json"}, 
       credentials: "include", //thus backend can identify the logged-in user via req.user.id
-     body:JSON.stringify({
+      body:JSON.stringify({
        title: newNote.title,
         content: newNote.content
       }),

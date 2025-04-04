@@ -161,8 +161,8 @@ app.post("/register", async (req, res) => {
         }
       });
 
-// CRUD of notes inside /main
-// Fetch notes for a specific user
+// update of notes inside /main
+// fetch notes for a specific user
 app.get("/main", async (req, res) => {
     console.log(req.user); // { user_id: user.id } from serializeUser
 
@@ -179,7 +179,7 @@ app.get("/main", async (req, res) => {
     }
   });
   
-// Add a new note 
+// add a new note 
 app.post("/main", async (req, res) => {
     console.log(req.user); // { user_id: user.id } from serializeUser
 
@@ -196,28 +196,9 @@ app.post("/main", async (req, res) => {
     } else {
     return res.status(401).json({ error : "Unauthorized" });
     }
-  });
-  
-// Edit a note 
-app.put("/main", async(req, res) => { 
-    if (req.isAuthenticated()) {
-        const { id, title, content } = req.body; 
-        try {
-          const result = await db.query("UPDATE notes SET title = $1, content = $2 WHERE id = $3 AND user_id = $4 RETURNING *", [title, content, id, req.user.user_id]);
-          if (result.rows.length === 0) return res.status(404).json({ error: "Task not found" }); 
-          // else
-          res.json({ message: "Task updated!", note: result.rows[0] });
-          console.log(result); 
-        } catch (err) {
-          console.error("Error editing task:", err);
-          res.status(500).json({ error: "Failed to update task" });
-        }     
-    } else {
-        return res.status(401).json({ error: "Unauthorized" });
-    }
-  });   
+  }); 
 
-// Delete a note 
+// delete a note 
 app.delete("/main", async (req, res) => {
     if (req.isAuthenticated()) {
         const { id } = req.query;
@@ -236,7 +217,7 @@ app.delete("/main", async (req, res) => {
     }
 }); 
 
-// Logout route
+// logout route
 app.get("/logout", (req, res) => {
     req.logout(function (err) {
       if (err) return res.status(500).json({ error: "Logout failed" });
