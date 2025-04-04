@@ -4,7 +4,7 @@ import AllInclusiveIcon from '@mui/icons-material/AllInclusive';
 import { Link, useNavigate } from "react-router-dom"; 
 // import { GoogleLogin } from "@react-oauth/google"; //renders a button that handles authentication with Google's OAuth API
 import { AuthClient } from "@dfinity/auth-client";
-import "../style.css";  
+import "@/style.css";  
 
 function Register({setUser}) {
 
@@ -13,9 +13,9 @@ function Register({setUser}) {
     const [email, setEmail] = useState(""); 
     const [password, setPassword] = useState(""); 
     const [error, setError] = useState(""); 
-    const backendUrl = process.env.NODE_ENV === "production"
-    ? "https://todolist-kbuf.onrender.com"
-    : "http://localhost:3000";  //local testing 
+    const backendUrl = import.meta.env.MODE === "production"  
+  ? import.meta.env.VITE_BACKEND_URL 
+  : "http://localhost:3000"; 
 
     function changeGreeting (event){
         const input = event.target.value; 
@@ -49,7 +49,7 @@ function Register({setUser}) {
     }; 
 
     function handleGoogleSignUp (){
-    const backendUrl = process.env.NODE_ENV === "production"
+      const backendUrl = import.meta.env.MODE === "production"
       ? "https://todolist-kbuf.onrender.com/auth/google"
       : "http://localhost:3000/auth/google";
       

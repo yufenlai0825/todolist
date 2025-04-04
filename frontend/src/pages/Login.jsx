@@ -3,7 +3,7 @@ import AllInclusiveIcon from '@mui/icons-material/AllInclusive';
 import GoogleIcon from '@mui/icons-material/Google';
 import { Link, useNavigate } from "react-router-dom"; 
 import { AuthClient } from "@dfinity/auth-client"; 
-import "../style.css";  
+import "@/style.css";  
 
 //pass user data to App.jsx via setUser
 function Login({setUser}) {
@@ -14,9 +14,9 @@ function Login({setUser}) {
   //Link is a React component can only be used as a JSX tag
 
   // for all backend API calls
-  const backendUrl = process.env.NODE_ENV === "production"
-  ? "https://todolist-kbuf.onrender.com"
-  : "http://localhost:3000";  //local testing
+  const backendUrl = import.meta.env.MODE === "production"  
+  ? import.meta.env.VITE_BACKEND_URL 
+  : "http://localhost:3000";  
 
   const handleSignIn = async (event) => {
     event.preventDefault(); 
@@ -48,9 +48,10 @@ function Login({setUser}) {
   }; 
 
     function handleGoogleSignIn (){
-      const backendUrl = process.env.NODE_ENV === "production"
-      ? "hhttps://todolist-kbuf.onrender.com/auth/google"
-      : "http://localhost:3000/auth/google";
+
+      const backendUrl = import.meta.env.MODE === "production"
+       ? "https://todolist-kbuf.onrender.com/auth/google"
+       : "http://localhost:3000/auth/google";  
       
       window.location.href = backendUrl;
     }; //redirect to backend GoogleOAuth

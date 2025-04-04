@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom"; 
 
 function Portal() {
-    return (
+      return (
       <div className="portal-container">
       <div className="portal-box">
         <h1>✨ Get Things Done! ✨ </h1>
@@ -16,4 +16,5 @@ function Portal() {
   }; 
   
   export default Portal;
+
   
