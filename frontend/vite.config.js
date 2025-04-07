@@ -15,9 +15,9 @@ export default defineConfig (({mode})=>{
     server: {
       proxy: {
         '/api': {
-          target: env.VITE_BACKEND_URL || 'http://localhost:3000', // backend port
+          target: env.VITE_BACKEND_URL || "http://localhost:3000", // backend port
           changeOrigin: true,
-          secure: env.MODE === 'production',
+          secure: env.MODE === "production",
         },
       },
     },
