@@ -1,10 +1,12 @@
-import { defineConfig } from "vite"; 
+import { defineConfig, loadEnv } from "vite"; 
 import react from "@vitejs/plugin-react"; 
 import path from "path"; 
-import env from "dotenv"; 
 
-export default defineConfig({
-     plugins: [react()],
+export default defineConfig (({mode})=>{
+  const env = loadEnv(mode, process.cwd()); 
+
+  return ({
+    plugins: [react()],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, 'src'), // allows '@/components/Header' inside src folder
@@ -13,10 +15,12 @@ export default defineConfig({
     server: {
       proxy: {
         '/api': {
-          target: process.env.VITE_BACKEND_URL || 'http://localhost:3000', // backend port
+          target: env.VITE_BACKEND_URL || 'http://localhost:3000', // backend port
           changeOrigin: true,
-          secure: process.env.MODE === 'production',
+          secure: env.MODE === 'production',
         },
       },
     },
-  });
+  }); 
+
+})
