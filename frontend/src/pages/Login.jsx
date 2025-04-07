@@ -33,12 +33,16 @@ function Login({setUser}) {
       });
 
       const result = await response.json();
+
       if (response.ok) {
-        setUser(result.user); // store logged-in user
-        navigate("/main");
+        if (result?.user) {     // make sureserver returns "user" property 
+          setUser(result.user);
+          navigate("/main");
       } else {
-        const result = await response.json();
-        setError(result.error || "Login failed");
+        setError("Unexpected response from server.");
+      }
+      } else {
+        setError(result?.message || result?.error || "Login failed");
       }
 
     } catch (error) {

@@ -23,23 +23,40 @@ useEffect(() => {
          if (!res.ok) {
           //Handle error here
           console.error("Failed to fetch session:", res.status);
-         return;
+         return null;
        }
          return res.json();
        })
        .then(data => {
          if (data.user) setUser(data.user);
-});
-}, []);
+        })
+        .catch(err => console.error("Session fetch error:", err));
+    }, []);
 
 //fetch only the logged-in users
 useEffect(() => {
-     if (user) {
-      fetch(`${backendUrl}/main`, { credentials: "include" })
-        .then(res => res.json())
-        .then(data => setNotes(data));
-     }
-   }, [user]);
+  if (user) {
+    fetch(`${backendUrl}/main`, { credentials: "include" })
+      .then(res => {
+        if (!res.ok) {
+          console.error("Failed to fetch notes:", res.status);
+          return null;
+        }
+        return res.json();
+      })
+      .then(data => {
+        if (Array.isArray(data)) {
+          setNotes(data);
+        } else if (data?.notes && Array.isArray(data.notes)) {
+          setNotes(data.notes);
+        } else {
+          console.warn("Unexpected response format:", data);
+          setNotes([]); // fallback: don't crash the app
+        }
+      })
+      .catch(err => console.error("Error fetching notes:", err));
+  }
+}, [user]);
   
    function addNote(newNote) {
    fetch(`${backendUrl}/main`, {
@@ -86,7 +103,7 @@ useEffect(() => {
          <Route path="/main" element={user? ( 
           <> 
           <CreateArea onAdd={addNote} />
-          {notes.map((note) => ( 
+          {Array.isArray(notes) && notes.map((note) => ( 
             <Note
             key={note.id} 
             id={note.id}

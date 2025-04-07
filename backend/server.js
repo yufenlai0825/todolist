@@ -71,7 +71,9 @@ passport.use("local", new Strategy(async function verify(username, password, cb)
 passport.use("google", new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: "/auth/google/main",   //both call back URLs registered on Google thus use relative route
+  callbackURL: process.env.NODE_ENV === 'production' 
+    ? process.env.GOOGLE_CALLBACK_URL 
+    : process.env.GOOGLE_CALLBACK_URL_LOCAL   
 }, async(accessToken, refreshToken, profile, cb) => {
 
   const googleEmail = profile._json.email;
