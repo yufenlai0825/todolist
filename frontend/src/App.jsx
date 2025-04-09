@@ -28,7 +28,7 @@ useEffect(() => {
          return res.json();
        })
        .then(data => {
-         if (data.user) setUser(data.user);
+         if (data?.user) setUser(data.user);  //make sure data is not null so it does not crash 
         })
         .catch(err => console.error("Session fetch error:", err));
     }, []);
@@ -68,12 +68,15 @@ useEffect(() => {
         content: newNote.content
       }),
     })
-     .then(res => res.json()) //backend converts HTTP res JSON objects to JS array 
+     .then(res => {
+      if (!res.ok) throw new Error("Unauthorized or add note failed"); 
+      return res.json();
+    }) //backend converts HTTP res JSON objects to JS array 
      .then(() => { //now React receives and can use it
        setNotes(prevNotes => {
          return [...prevNotes, newNote];
        });
-     }); 
+     }).catch(err => console.error("Add note error:", err));
    }
 
    function deleteNote(id) {
@@ -81,11 +84,14 @@ useEffect(() => {
        method: "DELETE",
       credentials: "include", 
      })
-     .then(res => res.json())
+     .then(res => {
+      if (!res.ok) throw new Error("Unauthorized or delete failed"); 
+      return res.json();
+    })
     .then(()=> {
       setNotes(prevNotes => {
         return (prevNotes.filter(note => note.id !== id))})
-     }); 
+     }).catch(err => console.error("Delete note error:", err)) 
    }
 
   return (

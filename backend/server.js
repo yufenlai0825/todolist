@@ -20,7 +20,7 @@ const db = new pg.Pool({
 const frontendURL = process.env.FRONTEND_URL; 
 const isProduction = process.env.NODE_ENV === "production"; //for dev testing, add secure and httpOnly inside cookie
 const corsOptions = {
-  origin: ["http://localhost:5173", frontendURL], // allow both frontend localhost and URL
+  origin: [frontendURL || "http://localhost:5173"], // allow both frontend localhost and URL
   credentials: true // allow cookies & authentication headers
 };
 env.config();
@@ -38,7 +38,7 @@ app.use(session({
     saveUninitialized: false,
     cookie: {
         maxAge : 24 * 60 * 60 * 1000,
-        sameSite: "none", //cross-site cookies
+        sameSite: isProduction? "none" : "lax",  //cross-site cookies for prod/ default for dev
         secure: isProduction // false in dev and true in production
     }
 })); 
@@ -97,8 +97,14 @@ passport.use("google", new GoogleStrategy({
 passport.serializeUser(function (user, cb){
   return cb(null, {user_id: user.id}); 
 }); 
-passport.deserializeUser(function(user, cb){
-  return cb(null, user);
+passport.deserializeUser(async (id, cb) => { //re-fetch full user from db 
+  try {
+    const result = await db.query("SELECT * FROM listusers WHERE id = $1", [id]);
+    cb(null, result.rows[0]); 
+  } catch (err) {
+    cb(err); 
+  }
+  
 }); 
 
 // Google OAuth 
