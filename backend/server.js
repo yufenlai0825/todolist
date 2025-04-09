@@ -20,9 +20,18 @@ const db = new pg.Pool({
 });
 const frontendURL = process.env.FRONTEND_URL; 
 const isProduction = process.env.NODE_ENV === "production"; //for dev testing, add secure and httpOnly inside cookie
+
 const corsOptions = {
-  origin: frontendURL || "http://localhost:5173", // allow both frontend localhost and URL
-  credentials: true // allow cookies & authentication headers
+  origin: function(origin, callback) {
+    const allowedOrigins = [frontendURL, "http://localhost:5173"];
+    // allow requests with no origin (like mobile apps, curl, etc.)
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error(`Origin ${origin} not allowed by CORS`));
+    }
+  },
+  credentials: true
 };
 
 app.set("trust proxy", 1); // required to support secure cookies over HTTPS
@@ -49,9 +58,13 @@ app.use(passport.initialize());
 app.use(passport.session()); 
 
 // Passport local strategy
-passport.use("local", new Strategy(async function verify(username, password, cb){
+passport.use("local", new Strategy({
+  usernameField: "email",
+  passwordField: "password"
+}, async function verify(email, password, cb){
   try {
-  const result = await db.query("SELECT * FROM listusers WHERE email = $1", [username]);    
+    console.log(`logging in ....${email}`)
+  const result = await db.query("SELECT * FROM listusers WHERE email = $1", [email]);    
   const user = result.rows[0];
   if (!user) return cb(null, false, { message: "User not found" });
 
@@ -129,7 +142,6 @@ app.get(
   (req, res) => res.json({ message: "Login successful", user: req.user }) //a user object is returned when login/register is successful
 );
 
-
 // check if user is logged in
 app.get("/auth/session", (req, res) => {
   if (req.isAuthenticated()) {
@@ -140,7 +152,8 @@ app.get("/auth/session", (req, res) => {
 });
 
 app.post("/login", (req, res, next) => {
-    passport.authenticate("local", (err, user, info) => {
+    passport.authenticate("local", (err, user, info) => { 
+      // console.log(`called ...${req.body.email}`);
         if (err) return res.status(500).json({ error: "Login error", message: err.message });
         if (!user) return res.status(401).json({ message: info.message });
 
@@ -257,6 +270,7 @@ app.use((err, req, res, next) => {
   });
 });  
 
+
 app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-  });
+  console.log(`Server running on port ${port}`);
+});
