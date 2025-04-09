@@ -100,9 +100,9 @@ passport.use("google", new GoogleStrategy({
 passport.serializeUser(function (user, cb){
   return cb(null, {user_id: user.id}); 
 }); 
-passport.deserializeUser(async (serializeUser, cb) => { //re-fetch full user from db 
+passport.deserializeUser(async (serializedUser, cb) => { //re-fetch full user from db 
   try {
-    const id = serializeUser.user_id; 
+    const id = serializedUser.user_id; 
     const result = await db.query("SELECT * FROM listusers WHERE id = $1", [id]);
     if (result.rows.length === 0) {
       return cb(null, false);
