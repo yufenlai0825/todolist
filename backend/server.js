@@ -8,6 +8,7 @@ import passport from "passport";
 import { Strategy } from "passport-local"; 
 import GoogleStrategy from "passport-google-oauth2"; 
 import env from "dotenv"; 
+env.config();
 
 const app = express(); 
 const port = process.env.PORT || 3000; //alternatively use Render's assigned port
@@ -23,7 +24,6 @@ const corsOptions = {
   origin: [frontendURL || "http://localhost:5173"], // allow both frontend localhost and URL
   credentials: true // allow cookies & authentication headers
 };
-env.config();
 
 app.use(cors(corsOptions)); // during dev allow web pages making requests across different origins
 app.use(express.json()); // enable JSON parsing e.g. req.body
@@ -58,7 +58,7 @@ passport.use("local", new Strategy(async function verify(username, password, cb)
       if (valid) {
         return cb(null, user); 
       } else {
-        return cb(null, { message: "Incorrect password" })
+        return cb(null, false, { message: "Incorrect password" })
       } 
     }); 
   } catch (err) {
@@ -217,7 +217,7 @@ app.delete("/main", async (req, res) => {
         res.json({message: "Task removed!"}); 
 
         } catch (error) {
-        console.error("Error removing task:", err);   
+        console.error("Error removing task:", error);   
         res.status(500).json({ error: "Failed to remove task" }); 
         }    
     } else {

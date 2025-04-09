@@ -32,9 +32,10 @@ function Register({setUser}) {
             headers:{"Content-Type": "application/json"}, 
             body: JSON.stringify({email, password}),
             credentials: "include"
-        });     
-        if (response.ok) {
+        });    
         const result = await response.json(); 
+         
+        if (response.ok) {
         console.log(result); 
         setUser(result.user);   
         navigate("/main");   
