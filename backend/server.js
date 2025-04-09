@@ -21,7 +21,7 @@ const db = new pg.Pool({
 const frontendURL = process.env.FRONTEND_URL; 
 const isProduction = process.env.NODE_ENV === "production"; //for dev testing, add secure and httpOnly inside cookie
 const corsOptions = {
-  origin: [frontendURL || "http://localhost:5173"], // allow both frontend localhost and URL
+  origin: frontendURL || "http://localhost:5173", // allow both frontend localhost and URL
   credentials: true // allow cookies & authentication headers
 };
 
@@ -97,13 +97,17 @@ passport.use("google", new GoogleStrategy({
 })); 
 
 passport.serializeUser(function (user, cb){
-  return cb(null, {user_id: user.id}); 
+  return cb(null, user.id); 
 }); 
 passport.deserializeUser(async (id, cb) => { //re-fetch full user from db 
   try {
     const result = await db.query("SELECT * FROM listusers WHERE id = $1", [id]);
+    if (result.rows.length === 0) {
+      return cb(null, false);
+    }; 
     cb(null, result.rows[0]); 
   } catch (err) {
+    console.error("Deserialization error:", err);
     cb(err); 
   }
   
@@ -139,7 +143,7 @@ app.post("/login", (req, res, next) => {
         if (!user) return res.status(401).json({ message: info.message });
 
         req.login(user, (err) => {
-            if (err) return res.status(500).json({ error: "Login failed" });
+            if (err) return res.status(500).json({ error: "Login failed", message: info.message });
             return res.json({ message: "Login successful", user });
         });
     })(req, res, next);
@@ -158,7 +162,7 @@ app.post("/register", async (req, res) => {
             const result = await db.query("INSERT INTO listusers (email, password) VALUES ($1, $2) RETURNING *", [email, hashedPassword]);
             const user = result.rows[0]; 
             req.login(user, (err) => {
-              if(err) return(res.status(500).json({ error: "Login failed after registration" })); 
+              if(err) return(res.status(500).json({ error: "Login failed after registration", message: err.message })); 
               res.json({ message : "Successfully registered!", user})
             }); 
           } else {
@@ -178,11 +182,11 @@ app.get("/main", async (req, res) => {
 
     if (req.isAuthenticated()) {
         try {
-            const result = await db.query("SELECT * FROM notes WHERE user_id = $1", [req.user.user_id]);
+            const result = await db.query("SELECT * FROM notes WHERE user_id = $1", [req.user.id]);
             res.json(result.rows); //send back JSON to frontend 
             } catch (err) {
             console.error("Error fetching task:", err); 
-            res.status(500).json({ error: "Internal Server Error" });       
+            res.status(500).json({ error: "Internal Server Error", details: err.message });       
             } 
     } else {
     return res.status(401).json({ error: "Unauthorized" });   
@@ -195,9 +199,9 @@ app.post("/main", async (req, res) => {
 
     if (req.isAuthenticated()) {
         const { title, content } = req.body;
-        const user_id = req.user.user_id; 
+        const user_id = req.user.id; 
         try {
-        const newNote = await db.query("INSERT INTO notes (user_id, title, content) VALUES ($1, $2, $3)", [user_id, title, content]);
+        const newNote = await db.query("INSERT INTO notes (user_id, title, content) VALUES ($1, $2, $3) RETURNING *", [user_id, title, content]);
         res.json({ message: "Task added!" , note: newNote.rows[0]});
         } catch (error) {
         console.error("Error adding task:", error);
@@ -213,14 +217,14 @@ app.delete("/main", async (req, res) => {
     if (req.isAuthenticated()) {
         const { id } = req.query;
         try {
-        const result = await db.query("DELETE FROM notes WHERE id = $1 AND user_id = $2 RETURNING *", [id, req.user.user_id]);
+        const result = await db.query("DELETE FROM notes WHERE id = $1 AND user_id = $2 RETURNING *", [id, req.user.id]);
         if (result.rows.length === 0) return res.status(404).json({ error : "Task not found!" });
 
         res.json({message: "Task removed!"}); 
 
         } catch (error) {
         console.error("Error removing task:", error);   
-        res.status(500).json({ error: "Failed to remove task" }); 
+        res.status(500).json({ error: "Failed to remove task", message: error.message }); 
         }    
     } else {
         return res.status(401).json({ error: "Unauthorized" });  
@@ -230,16 +234,26 @@ app.delete("/main", async (req, res) => {
 // logout route
 app.get("/logout", (req, res) => {
     req.logout(function (err) {
-      if (err) return res.status(500).json({ error: "Logout failed" });
+      if (err) return res.status(500).json({ error: "Logout failed", message: error.message });
       // else
       req.session.destroy((err) => {
-        if(err) return res.status(500).json({ error: "Session destruction failed" });
+        if(err) return res.status(500).json({ error: "Session destruction failed", message: error.message });
 
         res.clearCookie("connect.sid"); //clear cookie in browser too
         res.json({ message: "Logout successful" });
       }); 
     });
   });
+
+// global error handler
+app.use((err, req, res, next) => {
+  console.error("Unhandled error:", err);
+  res.status(500).json({ 
+    error: "Server error", 
+    message: err.message,
+    stack: process.env.NODE_ENV === 'production' ? undefined : err.stack
+  });
+});  
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
