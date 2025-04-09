@@ -18,10 +18,10 @@ const backendUrl = import.meta.env.MODE === "production"  // "development" or "p
 
 //fetch user session on mount
 useEffect(() => {
-    fetch(`${backendUrl}/auth/session`, { credentials: "include" }) 
+    fetch(`${backendUrl}/auth/session`, { method: "GET", credentials: "include" }) 
        .then(res => {
          if (!res.ok) {
-          //Handle error here
+          //handle error here
           console.error("Failed to fetch session:", res.status);
          return null;
        }
@@ -36,7 +36,7 @@ useEffect(() => {
 //fetch only the logged-in users
 useEffect(() => {
   if (user) {
-    fetch(`${backendUrl}/main`, { credentials: "include" })
+    fetch(`${backendUrl}/main`, { method: "GET", credentials: "include" })
       .then(res => {
         if (!res.ok) {
           console.error("Failed to fetch notes:", res.status);
