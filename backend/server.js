@@ -25,8 +25,10 @@ const corsOptions = {
   credentials: true // allow cookies & authentication headers
 };
 
+app.set("trust proxy", 1); // required to support secure cookies over HTTPS
 app.use(cors(corsOptions)); // during dev allow web pages making requests across different origins
 app.use(express.json()); // enable JSON parsing e.g. req.body
+
 app.use(session({
     store: new PgSession({
         pool: db,
