@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Link} from "react-router-dom"; 
+import { BrowserRouter as Router, Routes, Route, Navigate} from "react-router-dom"; 
 //use React Router to handle switching between pages
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -12,6 +12,8 @@ import Register from "@/pages/Register";
 function App() {
 const [notes, setNotes] = useState([]);
 const [user, setUser] = useState(null); //store logged-in users
+const [error, setError] = useState(null); 
+
 const backendUrl = import.meta.env.MODE === "production"  // "development" or "production"
 ? import.meta.env.VITE_BACKEND_URL //Render URL
 : "http://localhost:3000";  //local testing 
@@ -19,19 +21,12 @@ const backendUrl = import.meta.env.MODE === "production"  // "development" or "p
 //fetch user session on mount
 useEffect(() => {
     fetch(`${backendUrl}/auth/session`, { method: "GET", credentials: "include" }) 
-       .then(res => {
-         if (!res.ok) {
-          //handle error here
-          console.error("Failed to fetch session:", res.status);
-         return null;
-       }
-         return res.json();
-       })
+       .then(res => res.ok ? res.json() : null)
        .then(data => {
-         if (data?.user) setUser(data.user);  //make sure data is not null so it does not crash 
+         if (data?.user) setUser(data.user);  //make sure data is not null so it does not crash  
         })
-        .catch(err => console.error("Session fetch error:", err));
-    }, []);
+        .catch(err => console.error("Session fetch error:", err)); 
+    }, [backendUrl]); //fetching from the new URL to adapt e.g. switching between dev and prod
 
 //fetch only the logged-in users
 useEffect(() => {
@@ -40,25 +35,26 @@ useEffect(() => {
       .then(res => {
         if (!res.ok) {
           console.error("Failed to fetch notes:", res.status);
-          return null;
+          throw new Error(`Failed to fetch notes: ${res.status}`);
         }
         return res.json();
       })
       .then(data => {
         if (Array.isArray(data)) {
           setNotes(data);
-        } else if (data?.notes && Array.isArray(data.notes)) {
-          setNotes(data.notes);
         } else {
           console.warn("Unexpected response format:", data);
           setNotes([]); // fallback: don't crash the app
         }
+        setError(null); 
       })
-      .catch(err => console.error("Error fetching notes:", err));
-  }
-}, [user]);
+      .catch(err => {
+        console.error("Error fetching notes:", err);
+        setError(err.message)});
+      }}, [user, backendUrl]); 
   
    function addNote(newNote) {
+
    fetch(`${backendUrl}/main`, {
       method: "POST", 
       headers: {"Content-Type": "application/json"}, 
@@ -69,14 +65,23 @@ useEffect(() => {
       }),
     })
      .then(res => {
-      if (!res.ok) throw new Error("Unauthorized or add note failed"); 
+      if (!res.ok) throw new Error("Unauthorized or add note failed");
       return res.json();
     }) //backend converts HTTP res JSON objects to JS array 
-     .then(() => { //now React receives and can use it
-       setNotes(prevNotes => {
-         return [...prevNotes, newNote];
-       });
-     }).catch(err => console.error("Add note error:", err));
+     .then(data => { //now React can use it
+      // Use the server-returned note with its database ID
+      if (data && data.note) {
+        setNotes(prevNotes => [...prevNotes, data.note]);
+      } else {
+        // fallback to client-generated note if server doesn't return the created note
+        console.warn("Server didn't return note data, using client data");
+        const tempNote = {...newNote, id: Date.now()};
+        setNotes(prevNotes => [...prevNotes, tempNote]);
+      }; 
+     }).catch(err => {
+      console.error("Add note error:", err);
+      setError(err.message);
+    });
    }
 
    function deleteNote(id) {
@@ -90,13 +95,29 @@ useEffect(() => {
     })
     .then(()=> {
       setNotes(prevNotes => {
-        return (prevNotes.filter(note => note.id !== id))})
-     }).catch(err => console.error("Delete note error:", err)) 
+        return (prevNotes.filter(note => note.id !== id))});
+        setError(null); 
+     }).catch(err => {
+      console.error("Delete note error:", err);
+      setError(err.message); 
+   }) 
    }
 
   return (
     <Router>
        <Header />
+
+       {error && (
+        <div style={{ 
+          backgroundColor: "#ffdddd", 
+          color: "#ff0000", 
+          padding: "10px", 
+          margin: "10px 0", 
+          borderRadius: "5px" 
+        }}>
+          Error: {error}
+        </div>
+      )}
 
        <Routes>
          {/* Portal Page */ }
@@ -118,7 +139,7 @@ useEffect(() => {
             onDelete={deleteNote}
            /> 
           ))}
-          </>) : (<Link to="/register"/>)
+          </>) : (<Navigate to="/register"/>)
           } /> 
 
        </Routes>

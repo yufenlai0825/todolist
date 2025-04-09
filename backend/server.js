@@ -54,6 +54,7 @@ passport.use("local", new Strategy(async function verify(username, password, cb)
   const result = await db.query("SELECT * FROM listusers WHERE email = $1", [username]);    
   const user = result.rows[0];
   if (!user) return cb(null, false, { message: "User not found" });
+
     const storedHashedPassword = user.password;
     bcrypt.compare(password, storedHashedPassword, (err, valid) => {
       if (err) return cb(err); 
@@ -139,7 +140,7 @@ app.get("/auth/session", (req, res) => {
 
 app.post("/login", (req, res, next) => {
     passport.authenticate("local", (err, user, info) => {
-        if (err) return res.status(500).json({ error: "Login error" });
+        if (err) return res.status(500).json({ error: "Login error", message: err.message });
         if (!user) return res.status(401).json({ message: info.message });
 
         req.login(user, (err) => {
@@ -171,14 +172,14 @@ app.post("/register", async (req, res) => {
 
         } catch (err) {
           console.log(err);
-          res.status(500).json({ error: "Internal server error" });
+          res.status(500).json({ error: "Internal server error", message: err.message });
         }
       });
 
 // update of notes inside /main
 // fetch notes for a specific user
 app.get("/main", async (req, res) => {
-    console.log(req.user); // { user_id: user.id } from serializeUser
+    console.log(req.user); // log-in full user for debugging
 
     if (req.isAuthenticated()) {
         try {
@@ -195,7 +196,7 @@ app.get("/main", async (req, res) => {
   
 // add a new note 
 app.post("/main", async (req, res) => {
-    console.log(req.user); // { user_id: user.id } from serializeUser
+    console.log(req.user); 
 
     if (req.isAuthenticated()) {
         const { title, content } = req.body;
@@ -205,7 +206,7 @@ app.post("/main", async (req, res) => {
         res.json({ message: "Task added!" , note: newNote.rows[0]});
         } catch (error) {
         console.error("Error adding task:", error);
-        res.status(500).json({ error: "Failed to add task" });
+        res.status(500).json({ error: "Failed to add task", message: error.message });
         }    
     } else {
     return res.status(401).json({ error : "Unauthorized" });
@@ -234,10 +235,10 @@ app.delete("/main", async (req, res) => {
 // logout route
 app.get("/logout", (req, res) => {
     req.logout(function (err) {
-      if (err) return res.status(500).json({ error: "Logout failed", message: error.message });
+      if (err) return res.status(500).json({ error: "Logout failed", message: err.message });
       // else
       req.session.destroy((err) => {
-        if(err) return res.status(500).json({ error: "Session destruction failed", message: error.message });
+        if(err) return res.status(500).json({ error: "Session destruction failed", message: err.message });
 
         res.clearCookie("connect.sid"); //clear cookie in browser too
         res.json({ message: "Logout successful" });
