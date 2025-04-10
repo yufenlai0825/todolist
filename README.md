@@ -33,8 +33,7 @@ Session Management
 - Deployment: Render
 
 
-🧪 In Development
-Google OAuth Integration
+🧪 In Development: Google OAuth Integration
 - Support for logging in with Google is actively being developed and will be added in the next version.
 
 
