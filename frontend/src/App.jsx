@@ -139,7 +139,7 @@ useEffect(() => {
             onDelete={deleteNote}
            /> 
           ))}
-          </>) : (<Navigate to="/register" replace/>)
+          </>) : (<Navigate to="/register" replace />)
           } /> 
 
        </Routes>
