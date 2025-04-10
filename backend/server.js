@@ -201,7 +201,7 @@ app.get("/main", async (req, res) => {
             res.json(result.rows); //send back JSON to frontend 
             } catch (err) {
             console.error("Error fetching task:", err); 
-            res.status(500).json({ error: "Internal Server Error", details: err.message });       
+            res.status(500).json({ error: "Internal Server Error", message: err.message });       
             } 
     } else {
     return res.status(401).json({ error: "Unauthorized" });   

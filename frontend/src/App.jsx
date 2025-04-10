@@ -35,10 +35,7 @@ useEffect(() => {
   if (user) {
     fetch(`${backendUrl}/main`, { method: "GET", credentials: "include" })
       .then(res => {
-        if (!res.ok) {
-          console.error("Failed to fetch notes:", res.status);
-          throw new Error(`Failed to fetch notes: ${res.status}`);
-        }
+        if (!res.ok) throw new Error(`Failed to fetch notes: ${res.status}`);
         return res.json();
       })
       .then(data => {
@@ -51,8 +48,8 @@ useEffect(() => {
         setError(null); 
       })
       .catch(err => {
-        console.error("Error fetching notes:", err);
-        setError(err.message)});
+        console.error("Error fetching notes:", err); //"Error fetching notes: Error: `Failed to fetch notes: ${res.status}`"
+        setError(err.message)}); // `Failed to fetch notes: ${res.status}`
       }}, [user, backendUrl]); 
   
    function addNote(newNote) {
@@ -88,20 +85,21 @@ useEffect(() => {
 
    function deleteNote(id) {
     fetch(`${backendUrl}/main?id=${id}`, { 
-       method: "DELETE",
+       method: "DELETE",      
       credentials: "include", 
      })
      .then(res => {
-      if (!res.ok) throw new Error("Unauthorized or delete failed"); 
+      if (!res.ok) throw new Error("Unauthorized or delete failed"); //skips the second .then() and looks for a .catch() to handle the error
       return res.json();
     })
-    .then(()=> {
+    .then((data)=> {   //{ message: "Task removed!"} from server
       setNotes(prevNotes => {
+        console.log(data.message); 
         return (prevNotes.filter(note => note.id !== id))});
         setError(null); 
      }).catch(err => {
-      console.error("Delete note error:", err);
-      setError(err.message); 
+      console.error("Delete note error:", err); // "Delete note error: Error: Unauthorized or delete failed"
+      setError(err.message); //Unauthorized or delete failed
    }) 
    }
 
