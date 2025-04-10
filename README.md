@@ -37,7 +37,7 @@ Session Management
 - Support for logging in with Google is actively being developed and will be added in the next version.
 
 
-Install dependencies by npm install. Users can run the app locally by npm start (backend from /backend folder) and npm run dev (frontend from /frontend folder). 
+Install dependencies by npm install. Users can run the app locally by npm start (backend from /backend folder) and npm run build (frontend from /frontend folder). 
 The app will then run on http://localhost:5173 and use http://localhost:3000 as the API server. 
 
 

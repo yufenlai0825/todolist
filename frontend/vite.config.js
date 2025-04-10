@@ -20,7 +20,12 @@ export default defineConfig (({mode})=>{
           secure: env.MODE === "production",
         },
       },
+      historyApiFallback: true, // handles client-side routing in dev
     },
+    build: {
+      outDir: 'dist',
+      assetsDir: 'assets',
+    },
+    base: '/', // ensures correct path resolution for deployed app
   }); 
-
 })
