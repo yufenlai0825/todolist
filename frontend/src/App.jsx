@@ -9,6 +9,7 @@ import Portal from "@/pages/Portal";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register"; 
 
+
 function App() {
 const [notes, setNotes] = useState([]);
 const [user, setUser] = useState(null); //store logged-in users
@@ -20,6 +21,7 @@ const backendUrl = import.meta.env.MODE === "production"  // "development" or "p
 
 //fetch user session on mount
 useEffect(() => {
+  console.log("BackendURL is:", backendUrl); 
     fetch(`${backendUrl}/auth/session`, { method: "GET", credentials: "include" }) 
        .then(res => res.ok ? res.json() : null)
        .then(data => {
