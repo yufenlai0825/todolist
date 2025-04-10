@@ -88,9 +88,7 @@ passport.use("local", new Strategy({
 passport.use("google", new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: process.env.NODE_ENV === 'production' 
-    ? process.env.GOOGLE_CALLBACK_URL 
-    : process.env.GOOGLE_CALLBACK_URL_LOCAL   
+  callbackURL: isProduction ? process.env.GOOGLE_CALLBACK_URL : process.env.GOOGLE_CALLBACK_URL_LOCAL   
 }, async(accessToken, refreshToken, profile, cb) => {
 
   const googleEmail = profile._json.email;
@@ -141,7 +139,9 @@ app.get(
   "/auth/google/main",
   passport.authenticate("google", {failureRedirect: "/login",}), 
   (req, res) => {
-    res.json({ message: "Login successful", user: req.user }) //a user object is returned when login/register is successful
+    const redirectUrl = isProduction ? `${frontendURL}/main` : "http://localhost:5173/main";
+    console.log("Redirecting to:", redirectUrl); 
+    return res.redirect(redirectUrl);
   }
 );
 
@@ -253,7 +253,7 @@ app.post("/register", async (req, res) => {
 // update of notes inside /main
 // fetch notes for a specific user
 app.get("/main", async (req, res) => {
-    console.log(req.user); // log-in full user for debugging
+    //console.log(req.user); log-in full user for debugging
 
     if (req.isAuthenticated()) {
         try {

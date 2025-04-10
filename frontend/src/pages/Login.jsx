@@ -52,35 +52,36 @@ function Login({setUser}) {
   }; 
 
     function handleGoogleSignIn (){
-      try {
-        fetch(
-          `${backendUrl}/auth/session`, {
-            method: "GET",
-            credentials: "include"
-          })
-        .then(res => {
-          if (!res.ok) throw new Error("Sign-in failed");
-          return res.json();
-        })
-        .then(data => {
-          if (data?.user) {
-            setUser(data.user);
-            navigate("/main"); 
-          } else {
-            setError("Authentication failed. Try other ways to login."); 
-            navigate("login"); 
-          }
-          })
-        .catch(err =>{
-          console.error("Failed to verify authentication", err);
-          setError(err.message); 
-          navigate("login");
-        }); 
-      } catch (err) {
-        console.error("Error initializing Google authentication", err);
-        setError("Failed to initialize Google authentication");
-        navigate("login");
-      }
+      window.location.href = `${backendUrl}/auth/google`;
+      // try {
+      //   fetch(
+      //     `${backendUrl}/auth/session`, {
+      //       method: "GET",
+      //       credentials: "include"
+      //     })
+      //   .then(res => {
+      //     if (!res.ok) throw new Error("Sign-in failed");
+      //     return res.json();
+      //   })
+      //   .then(data => {
+      //     if (data?.user) {
+      //       setUser(data.user);
+      //       navigate("/main"); 
+      //     } else {
+      //       setError("Authentication failed. Try other ways to login."); 
+      //       navigate("login"); 
+      //     }
+      //     })
+      //   .catch(err =>{
+      //     console.error("Failed to verify authentication", err);
+      //     setError(err.message); 
+      //     navigate("login");
+      //   }); 
+      // } catch (err) {
+      //   console.error("Error initializing Google authentication", err);
+      //   setError("Failed to initialize Google authentication");
+      //   navigate("login");
+      // }
     }; 
 
     const handleInternetSignIn = async () => {

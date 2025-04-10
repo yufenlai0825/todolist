@@ -50,8 +50,7 @@ function Register({setUser}) {
     }; 
 
     function handleGoogleSignUp (){
-      
-   
+      window.location.href = `${backendUrl}/auth/google`;
     }; 
 
     const handleInternetSignUp = async () => {
