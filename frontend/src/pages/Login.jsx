@@ -52,13 +52,36 @@ function Login({setUser}) {
   }; 
 
     function handleGoogleSignIn (){
-
-      const backendUrl = import.meta.env.MODE === "production"
-       ? "https://todolist-kbuf.onrender.com/auth/google"
-       : "http://localhost:3000/auth/google";  
-      
-      window.location.href = backendUrl;
-    }; //redirect to backend GoogleOAuth
+      try {
+        fetch(
+          `${backendUrl}/auth/session`, {
+            method: "GET",
+            credentials: "include"
+          })
+        .then(res => {
+          if (!res.ok) throw new Error("Sign-in failed");
+          return res.json();
+        })
+        .then(data => {
+          if (data?.user) {
+            setUser(data.user);
+            navigate("/main"); 
+          } else {
+            setError("Authentication failed. Try other ways to login."); 
+            navigate("login"); 
+          }
+          })
+        .catch(err =>{
+          console.error("Failed to verify authentication", err);
+          setError(err.message); 
+          navigate("login");
+        }); 
+      } catch (err) {
+        console.error("Error initializing Google authentication", err);
+        setError("Failed to initialize Google authentication");
+        navigate("login");
+      }
+    }; 
 
     const handleInternetSignIn = async () => {
 

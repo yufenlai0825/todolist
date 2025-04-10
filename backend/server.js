@@ -140,7 +140,9 @@ app.get(
 app.get(
   "/auth/google/main",
   passport.authenticate("google", {failureRedirect: "/login",}), 
-  (req, res) => res.json({ message: "Login successful", user: req.user }) //a user object is returned when login/register is successful
+  (req, res) => {
+    res.json({ message: "Login successful", user: req.user }) //a user object is returned when login/register is successful
+  }
 );
 
 // Internet Identity use a GET request with URL parameters

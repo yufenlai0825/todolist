@@ -90,11 +90,11 @@ useEffect(() => {
      })
      .then(res => {
       if (!res.ok) throw new Error("Unauthorized or delete failed"); //skips the second .then() and looks for a .catch() to handle the error
-      return res.json();
+      return res.json(); // { message: "Task removed!"} from server
     })
-    .then((data)=> {   //{ message: "Task removed!"} from server
+    .then((data)=> {   // parsed { message: "Task removed!"} 
       setNotes(prevNotes => {
-        console.log(data.message); 
+        console.log(data.message); // "Task removed!"
         return (prevNotes.filter(note => note.id !== id))});
         setError(null); 
      }).catch(err => {
@@ -139,7 +139,7 @@ useEffect(() => {
             onDelete={deleteNote}
            /> 
           ))}
-          </>) : (<Navigate to="/register"/>)
+          </>) : (<Navigate to="/register" replace/>)
           } /> 
 
        </Routes>

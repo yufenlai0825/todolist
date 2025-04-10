@@ -50,11 +50,8 @@ function Register({setUser}) {
     }; 
 
     function handleGoogleSignUp (){
-      const backendUrl = import.meta.env.MODE === "production"
-      ? "https://todolist-kbuf.onrender.com/auth/google"
-      : "http://localhost:3000/auth/google";
       
-      window.location.href = backendUrl; 
+   
     }; 
 
     const handleInternetSignUp = async () => {
