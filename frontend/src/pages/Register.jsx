@@ -12,7 +12,7 @@ function Register({setUser}) {
     const [greeting, setGreeting] = useState("Create Your Account"); 
     const [email, setEmail] = useState(""); 
     const [password, setPassword] = useState(""); 
-    const [error, setError] = useState(""); 
+    const [err, setError] = useState(""); 
     const backendUrl = import.meta.env.MODE === "production"  
   ? import.meta.env.VITE_BACKEND_URL 
   : "http://localhost:3000"; 
@@ -40,11 +40,11 @@ function Register({setUser}) {
         setUser(result.user);   
         navigate("/main");   
         } else {
-        setError(result.error || "Register failed.");     
+        setError(result.err || "Register failed.");     
         }    
         console.log("Server Response:", result); //
-        } catch (error) {
-        console.error(error); 
+        } catch (err) {
+        console.error(err); 
         setError("An error occured. Please check the console for details.")    
         }
     }; 
@@ -58,15 +58,42 @@ function Register({setUser}) {
     }; 
 
     const handleInternetSignUp = async () => {
+
+      try {
         const authClient = await AuthClient.create(); 
         await authClient.login({
-            identityProvider: "https://identity.ic0.app", 
-            onSuccess: async() => {
+          identityProvider: "https://identity.ic0.app", 
+          onSuccess: async() => {
             const identity = authClient.getIdentity(); 
-            setUser({name: "Internet Identity User", id: identity.getPrincipal().toText() }); 
-            navigate("/main"); 
-            }
-    })
+            const principalID= identity.getPrincipal().toText(); 
+            console.log("Got Internet Identity principalID:", principalID); //debug
+
+
+            // Instead of redirecting, use fetch and handle response manually
+            try {
+              const response = await fetch(`${backendUrl}/auth/internet-identity/${principalID}`, {
+                method: "GET",
+                credentials: "include"
+              });
+              if (!response.ok) {throw new Error("Authentication failed");}
+              
+              const data = await response.json();
+              setUser(data.user);
+              navigate("/main"); // Manual navigation after successful fetch
+              
+              } catch (err) {
+                console.error("Authentication error:", err);
+                setError("Failed to authenticate");
+              }
+          }, onError: (err)=> {
+            console.error("Internet Identity login error:", err);
+            setError("Internet Identity login failed");
+          }
+        });
+      } catch (err) {
+        console.error("Internet Identity initialization error:", err);
+        setError("Failed to initialize Internet Identity");
+      }
     }; 
 
     return (

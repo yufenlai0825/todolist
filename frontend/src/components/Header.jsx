@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 function Header() {
   const [user ,setUser] = useState(null); 
-  const [error, setError] = useState(null); 
+  const [err, setError] = useState(null); 
   const navigate = useNavigate(); 
 
   // direct all API operations (login, logout, data fetching) to backend server

@@ -9,7 +9,7 @@ import "@/style.css";
 function Login({setUser}) {
   const [email, setEmail] = useState(""); 
   const [password, setPassword] = useState("");  
-  const [error, setError] = useState(""); 
+  const [err, setError] = useState(""); 
   const navigate = useNavigate(); 
   //Link is a React component can only be used as a JSX tag
 
@@ -28,8 +28,8 @@ function Login({setUser}) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
         credentials: "include", // important for session-based auth
+        body: JSON.stringify({ email, password }),
       });
 
       const result = await response.json();
@@ -42,11 +42,11 @@ function Login({setUser}) {
         setError("Unexpected response from server.");
       }
       } else {
-        setError(result?.message || result?.error || "Login failed");
+        setError(result?.message || result?.err || "Login failed");
       }
 
-    } catch (error) {
-      console.error("Login error:", error);
+    } catch (err) {
+      console.error("Login error:", err);
       setError("An error occurred. Please try again.");
     }
   }; 
@@ -61,15 +61,43 @@ function Login({setUser}) {
     }; //redirect to backend GoogleOAuth
 
     const handleInternetSignIn = async () => {
-      const authClient = await AuthClient.create(); 
-      await authClient.login({
-        identityProvider: "https://identity.ic0.app", 
-        onSuccess: async() => {
-          const identity = authClient.getIdentity(); 
-          setUser({name: "Internet Identity User", id: identity.getPrincipal().toText() }); 
-          navigate("/main"); 
-        }
-      })
+
+      try {
+        const authClient = await AuthClient.create(); 
+        await authClient.login({
+          identityProvider: "https://identity.ic0.app", 
+
+          onSuccess: async() => {
+            const identity = authClient.getIdentity(); 
+            const principalID= identity.getPrincipal().toText(); 
+            console.log("Got Internet Identity principalID:", principalID); //debug
+
+            // Instead of redirecting, use fetch and handle response manually
+            try {
+              const response = await fetch(`${backendUrl}/auth/internet-identity/${principalID}`, {
+                method: "GET",
+                credentials: "include"
+              });
+              if (!response.ok) {throw new Error("Authentication failed");}
+              
+              const data = await response.json();
+              setUser(data.user);
+              navigate("/main"); // Manual navigation after successful fetch
+
+              } catch (err) {
+                console.error("Authentication error:", err);
+                setError("Failed to authenticate");
+              }
+              
+          }, onError: (err)=> {
+            console.error("Internet Identity login error:", err);
+            setError("Internet Identity login failed");
+          }
+        });
+      } catch (err) {
+        console.error("Internet Identity initialization error:", err);
+        setError("Failed to initialize Internet Identity");
+      }
     }; 
 
     return (

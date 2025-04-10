@@ -21,7 +21,7 @@ const backendUrl = import.meta.env.MODE === "production"  // "development" or "p
 
 //fetch user session on mount
 useEffect(() => {
-  console.log("BackendURL is:", backendUrl); 
+  //console.log("BackendURL is:", backendUrl); 
     fetch(`${backendUrl}/auth/session`, { method: "GET", credentials: "include" }) 
        .then(res => res.ok ? res.json() : null)
        .then(data => {
