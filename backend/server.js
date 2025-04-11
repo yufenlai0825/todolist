@@ -19,7 +19,7 @@ const db = new pg.Pool({
   ssl: { rejectUnauthorized: false },  
 });
 const frontendURL = process.env.FRONTEND_URL; 
-const isProduction = process.env.NODE_ENV === "production"; //for dev testing, add secure and httpOnly inside cookie
+const isProduction = process.env.NODE_ENV === "production";
 
 const corsOptions = {
   origin: function(origin, callback) {
@@ -64,7 +64,7 @@ passport.use("local", new Strategy({
   passwordField: "password"
 }, async function verify(email, password, cb){
   try {
-    // console.log(`logging in ....${email}`)
+
   const result = await db.query("SELECT * FROM listusers WHERE email = $1", [email]);    
   const user = result.rows[0];
   if (!user) return cb(null, false, { message: "User not found" });
@@ -78,6 +78,7 @@ passport.use("local", new Strategy({
         return cb(null, false, { message: "Incorrect password" })
       } 
     }); 
+
   } catch (err) {
   console.log(err); 
   return cb(err); 
@@ -86,6 +87,7 @@ passport.use("local", new Strategy({
 
 // Passport Google OAuth strategy
 passport.use("google", new GoogleStrategy({
+
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   callbackURL: isProduction ? process.env.GOOGLE_CALLBACK_URL : process.env.GOOGLE_CALLBACK_URL_LOCAL   
@@ -139,11 +141,6 @@ app.get(
   "/auth/google/main",
   passport.authenticate("google", {failureRedirect: "/login",}), 
   (req, res) => {
-    
-    //debugging
-    console.log("Google auth complete - Session ID:", req.sessionID);
-    console.log("User in session:", req.user);
-    console.log("Session cookie:", req.headers.cookie);
 
     setTimeout(()=>{
       const redirectUrl = isProduction ? `${frontendURL}/main` : "http://localhost:5173/main";
@@ -159,7 +156,7 @@ app.get("/auth/internet-identity/:principalID", async (req, res) => {
   try {
     const { principalID } = req.params; 
     
-    // Check if principalID exists 
+    // check if principalID exists 
     if (!principalID) 
       {
         console.error("Missing principalID in request:", req.params);
@@ -173,7 +170,7 @@ app.get("/auth/internet-identity/:principalID", async (req, res) => {
     let user = result.rows[0]; 
 
     if (!user){
-      // Get a safe display name from the principal
+      // get a safe display name from the principal
       let displayName = "II User";
       try {
       if (principalID && principalID.length > 8) {
@@ -195,10 +192,6 @@ app.get("/auth/internet-identity/:principalID", async (req, res) => {
         return res.status(500).json({ err: "Login failed after creating account", message: err.message })
       }; 
 
-    // console.log for debugging
-    // console.log(`Internet Identity user logged in: ${user.id}`);  
-    // console.log(user)
-
     // if success then return JSON
     return res.json({ message: "Login successful", user });
 
@@ -212,11 +205,6 @@ app.get("/auth/internet-identity/:principalID", async (req, res) => {
 
 // check if user is logged in
 app.get("/auth/session", (req, res) => {
-
-  //debugging
-  console.log("Session check - Session ID:", req.sessionID);
-  console.log("Session check - Is authenticated:", req.isAuthenticated());
-  console.log("Session check - User:", req.user);
 
   if (req.isAuthenticated()) {
       res.json({ user: req.user });
@@ -267,7 +255,6 @@ app.post("/register", async (req, res) => {
 // update of notes inside /main
 // fetch notes for a specific user
 app.get("/main", async (req, res) => {
-    //console.log(req.user); log-in full user for debugging
 
     if (req.isAuthenticated()) {
         try {
@@ -336,7 +323,6 @@ app.get("/logout", (req, res) => {
 
 // global error handler
 app.use((err, req, res, next) => {
-  console.error("Unhandled error:", err);
   res.status(500).json({ 
     err: "Server error", 
     message: err.message,
