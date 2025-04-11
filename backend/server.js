@@ -139,9 +139,17 @@ app.get(
   "/auth/google/main",
   passport.authenticate("google", {failureRedirect: "/login",}), 
   (req, res) => {
-    const redirectUrl = isProduction ? `${frontendURL}/main` : "http://localhost:5173/main";
-    console.log("Redirecting to:", redirectUrl); 
-    return res.redirect(redirectUrl);
+    
+    //debugging
+    console.log("Google auth complete - Session ID:", req.sessionID);
+    console.log("User in session:", req.user);
+    console.log("Session cookie:", req.headers.cookie);
+
+    setTimeout(()=>{
+      const redirectUrl = isProduction ? `${frontendURL}/main` : "http://localhost:5173/main";
+      console.log("Redirecting to:", redirectUrl); 
+      return res.redirect(redirectUrl);
+    }, 1000) // 1 sec delay so session can be established first
   }
 );
 
@@ -204,6 +212,12 @@ app.get("/auth/internet-identity/:principalID", async (req, res) => {
 
 // check if user is logged in
 app.get("/auth/session", (req, res) => {
+
+  //debugging
+  console.log("Session check - Session ID:", req.sessionID);
+  console.log("Session check - Is authenticated:", req.isAuthenticated());
+  console.log("Session check - User:", req.user);
+
   if (req.isAuthenticated()) {
       res.json({ user: req.user });
   } else {

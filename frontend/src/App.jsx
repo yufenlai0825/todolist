@@ -17,34 +17,36 @@ const [error, setError] = useState(null);
 const [loading, setLoading] = useState(true);
 
 const backendUrl = import.meta.env.MODE === "production"  // "development" or "production"
-? import.meta.env.VITE_BACKEND_URL //Render URL
-: "http://localhost:3000";  //local testing 
+? import.meta.env.VITE_BACKEND_URL 
+: "http://localhost:3000";  
 
 //fetch user session on mount
 useEffect(() => {
-  //console.log("BackendURL is:", backendUrl); 
-  console.log("Checking session..."); 
+
   setLoading(true); // Start loading
 
+  setTimeout(() => {
     fetch(`${backendUrl}/auth/session`, { method: "GET", credentials: "include" }) 
-       .then(res => 
-       {console.log("Session response status:", res.status);
-        res.ok ? res.json() : null
-       })
-       .then(data => 
-        {console.log("Session data:", data);
-         if (data?.user) 
-         {console.log("User found in session, setting user state");
-          setUser(data.user);  //make sure data is not null so it does not crash
-         } else {
-          console.log("No user found in session");
-         }
-         setLoading(false); // End loading regardless of result  
-        })
-        .catch(err => {
-          console.error("Session fetch error:", err); 
-          setLoading(false); // End loading on error
-        }); 
+    .then(res => 
+    {console.log("Session response status:", res.status);
+     return res.ok ? res.json() : null
+    })
+    .then(data => 
+     {console.log("Session data:", data);
+      if (data?.user) 
+      {console.log("User found in session, setting user state");
+       setUser(data.user);  // make sure data is not null so it does not crash
+      } else {
+       console.log("No user found in session");
+      }
+      setLoading(false); // End loading regardless of result  
+     })
+     .catch(err => {
+       console.error("Session fetch error:", err); 
+       setLoading(false); // End loading on error
+     }); 
+  }, 500) // 500ms delay to ensure session is ready
+
     }, [backendUrl]); //fetching from the new URL to adapt e.g. switching between dev and prod
 
 //fetch only the logged-in users
