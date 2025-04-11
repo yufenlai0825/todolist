@@ -13,7 +13,7 @@ Give it a try!
 User Authentication
 
 - Local username/password login (with Passport.js)
-- Internet Identity login (powered by Dfinity)
+- Google OAuth 2.0, Internet Identity login (powered by Dfinity)
 
 Personal Task Management
 - Add, delete, and view your own to-do cards after login
@@ -36,18 +36,18 @@ Session Management
 
 - Set up environment variables: 
 
-inside frontend folder, create .env file with: 
-VITE_BACKEND_URL=your_backend_url
-VITE_GOOGLE_CLIENT_ID=your_client_id
+inside frontend folder, create .env file with:   
+VITE_BACKEND_URL=your_backend_url  
+VITE_GOOGLE_CLIENT_ID=your_client_id  
 
 inside backend folder, create .env file with:
-DATABASE_URL=your_db_url
-GOOGLE_CLIENT_ID=your_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-GOOGLE_CALLBACK_URL=your_google_cb_url
-GOOGLE_CALLBACK_URL_LOCAL=your_google_cb_url_localhost
-SESSION_SECRET=your_session_secret
-FRONTEND_URL=your_frontend_url
+DATABASE_URL=your_db_url  
+GOOGLE_CLIENT_ID=your_client_id  
+GOOGLE_CLIENT_SECRET=your_google_client_secret  
+GOOGLE_CALLBACK_URL=your_google_cb_url  
+GOOGLE_CALLBACK_URL_LOCAL=your_google_cb_url_localhost  
+SESSION_SECRET=your_session_secret  
+FRONTEND_URL=your_frontend_url  
 
 - Install dependencies by npm install. Users can run the app locally by npm start (backend from /backend folder) and npm run build (frontend from /frontend folder). 
 
