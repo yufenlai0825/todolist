@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate} from "react-router-dom"; 
-//use React Router to handle switching between pages
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Note from "@/components/Note";
@@ -23,27 +22,23 @@ const backendUrl = import.meta.env.MODE === "production"  // "development" or "p
 //fetch user session on mount
 useEffect(() => {
 
-  setLoading(true); // Start loading
+  setLoading(true); // start loading
 
   setTimeout(() => {
     fetch(`${backendUrl}/auth/session`, { method: "GET", credentials: "include" }) 
-    .then(res => 
-    {console.log("Session response status:", res.status);
-     return res.ok ? res.json() : null
-    })
+    .then(res => { return res.ok ? res.json() : null})
     .then(data => 
-     {console.log("Session data:", data);
-      if (data?.user) 
-      {console.log("User found in session, setting user state");
+     {
+      if (data?.user) {
        setUser(data.user);  // make sure data is not null so it does not crash
       } else {
        console.log("No user found in session");
       }
-      setLoading(false); // End loading regardless of result  
+      setLoading(false); // end loading regardless of result  
      })
      .catch(err => {
        console.error("Session fetch error:", err); 
-       setLoading(false); // End loading on error
+       setLoading(false); // end loading on error
      }); 
   }, 500) // 500ms delay to ensure session is ready
 
