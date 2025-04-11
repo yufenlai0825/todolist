@@ -63,6 +63,7 @@ passport.use("local", new Strategy({
   usernameField: "email",
   passwordField: "password"
 }, async function verify(email, password, cb){
+  
   try {
 
   const result = await db.query("SELECT * FROM listusers WHERE email = $1", [email]);    
