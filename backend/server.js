@@ -22,13 +22,14 @@ const frontendURL = process.env.FRONTEND_URL;
 const isProduction = process.env.NODE_ENV === "production";
 
 const corsOptions = {
-  origin: function(origin, callback) {
+  origin: function(origin, cb) {
     const allowedOrigins = [frontendURL, "http://localhost:5173"];
-    // allow requests with no origin (like mobile apps, curl, etc.)
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
+    // allow requests with no origin (e.g. Postman, server-side req ; or if origin is in the list of allowedOrigins)
+    if (!origin || allowedOrigins.includes(origin)) {
+      cb(null, true);
     } else {
-      callback(new Error(`Origin ${origin} not allowed by CORS`));
+      console.warn(`Blocked CORS request from: ${origin}`);
+      cb(new Error("Not allowed by CORS"));
     }
   },
   credentials: true
