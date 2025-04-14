@@ -36,11 +36,11 @@ Session Management
 
 - Set up environment variables: 
 
-inside frontend folder, create .env file with:   
+inside frontend folder, create .env file with:     
 VITE_BACKEND_URL=your_backend_url  
 VITE_GOOGLE_CLIENT_ID=your_client_id  
 
-inside backend folder, create .env file with:  
+inside backend folder, create .env file with:    
 DATABASE_URL=your_db_url  
 GOOGLE_CLIENT_ID=your_client_id  
 GOOGLE_CLIENT_SECRET=your_google_client_secret  
