@@ -32,12 +32,12 @@ const corsOptions = {
       cb(new Error("Not allowed by CORS"));
     }
   },
-  credentials: true
+  credentials: true //send cookies if the origin is allowed
 };
 
 app.set("trust proxy", 1); // required to support secure cookies over HTTPS
 app.use(express.json()); // enable JSON parsing e.g. req.body
-app.use(cors(corsOptions)); // during dev allow web pages making requests across different origins
+app.use(cors(corsOptions)); 
 
 
 app.use(session({
@@ -219,10 +219,10 @@ app.post("/login", (req, res, next) => {
     passport.authenticate("local", (err, user, info) => { 
       // console.log(`called ...${req.body.email}`);
         if (err) return res.status(500).json({ err: "Login error", message: err.message });
-        if (!user) return res.status(401).json({ message: info.message });
+        if (!user) return res.status(401).json({ message: info.message }); // "User not found"
 
         req.login(user, (err) => {
-            if (err) return res.status(500).json({ err: "Login failed", message: info.message });
+            if (err) return res.status(500).json({ err: "Login failed", message: info.message }); // "Incorrect password"
             return res.json({ message: "Login successful", user });
         });
     })(req, res, next);

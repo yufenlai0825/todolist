@@ -47,7 +47,7 @@ useEffect(() => {
 //fetch only the logged-in users
 useEffect(() => {
   if (user) {
-    fetch(`${backendUrl}/main`, { method: "GET", credentials: "include" })
+    fetch(`${backendUrl}/main`, { method: "GET", credentials: "include" }) //include cookies like sid
       .then(res => {
         if (!res.ok) throw new Error(`Failed to fetch notes: ${res.status}`);
         return res.json();
