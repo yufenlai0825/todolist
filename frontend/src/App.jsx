@@ -80,15 +80,14 @@ useEffect(() => {
      .then(res => {
       if (!res.ok) throw new Error("Unauthorized or add note failed");
       return res.json();
-    }) //backend converts HTTP res JSON objects to JS array 
-     .then(data => { //now React can use it
-      // Use the server-returned note with its database ID
+    })  
+     .then(data => { 
       if (data && data.note) {
         setNotes(prevNotes => [...prevNotes, data.note]);
       } else {
         // fallback to client-generated note if server doesn't return the created note
         console.warn("Server didn't return note data, using client data");
-        const tempNote = {...newNote, id: Date.now()};
+        const tempNote = {...newNote, id: Date.now()};  // assign a random and unique id by using Date.now()
         setNotes(prevNotes => [...prevNotes, tempNote]);
       }; 
      }).catch(err => {
@@ -113,7 +112,7 @@ useEffect(() => {
         setError(null); 
      }).catch(err => {
       console.error("Delete note error:", err); // "Delete note error: Error: Unauthorized or delete failed"
-      setError(err.message); //Unauthorized or delete failed
+      setError(err.message); // Unauthorized or delete failed
    }) 
    }
 
