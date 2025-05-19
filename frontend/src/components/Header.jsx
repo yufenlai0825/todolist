@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import { useNavigate, useLocation } from "react-router-dom";
 
 function Header({ user, setUser }) {
-  const [user ,setUser] = useState(null); 
   const [err, setError] = useState(null); 
   const navigate = useNavigate(); 
   const location = useLocation(); 
@@ -12,19 +11,6 @@ function Header({ user, setUser }) {
   const backendUrl = import.meta.env.MODE === "production"  
   ? import.meta.env.VITE_BACKEND_URL 
   : "http://localhost:3000"; 
-
-  // fetch current session user on mount
-  useEffect(() => {
-    fetch(`${backendUrl}/auth/session`, { credentials: "include" })
-      .then(res => res.ok ? res.json() : null)
-      .then(data => {
-        if (data?.user) setUser(data.user);
-        else setUser(null);
-      })
-      .catch(err => {
-        console.error("Session check failed:", err);
-      });
-  }, [backendUrl]);
 
   function handleLogout() {
    fetch(`${backendUrl}/logout`, { 
@@ -47,7 +33,7 @@ function Header({ user, setUser }) {
 
   // display logout button based on routes
   const hideLogoutRoutes = ["/", "/login", "/register"];
-  const shouldShowLogout = user && !hideLogoutRoutes.includes(location.pathname);
+  const showLogoutRoutes = user && !hideLogoutRoutes.includes(location.pathname);
 
   return (
     <header>
@@ -55,7 +41,7 @@ function Header({ user, setUser }) {
         <EditNoteIcon fontSize="large" />
         To Do List
       </h1>
-            { shouldShowLogout && (
+            { showLogoutRoutes && (
         <button className="logout-button" onClick={handleLogout}>
           Logout
         </button>
