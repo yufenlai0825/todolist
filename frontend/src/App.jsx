@@ -118,7 +118,7 @@ useEffect(() => {
 
   return (
     <Router>
-       <Header />
+       <Header user={user} setUser={setUser} />
 
        {error && (
         <div style={{ 

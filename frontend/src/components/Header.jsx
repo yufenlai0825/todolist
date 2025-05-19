@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import { useNavigate, useLocation } from "react-router-dom";
 
-function Header() {
+function Header({ user, setUser }) {
   const [user ,setUser] = useState(null); 
   const [err, setError] = useState(null); 
   const navigate = useNavigate(); 
