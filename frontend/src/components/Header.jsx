@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -13,7 +13,7 @@ function Header() {
   ? import.meta.env.VITE_BACKEND_URL 
   : "http://localhost:3000"; 
 
-  // Fetch current session user on mount
+  // fetch current session user on mount
   useEffect(() => {
     fetch(`${backendUrl}/auth/session`, { credentials: "include" })
       .then(res => res.ok ? res.json() : null)
@@ -45,7 +45,7 @@ function Header() {
       });
   };
 
-  // Hide logout on these routes
+  // display logout button based on routes
   const hideLogoutRoutes = ["/", "/login", "/register"];
   const shouldShowLogout = user && !hideLogoutRoutes.includes(location.pathname);
 
