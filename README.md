@@ -1,58 +1,80 @@
-📝 To Do List App
+# 📝 To Do List App 
 
+This is a **full-stack To Do List application** that enables users to register, log in, and manage their personal tasks securely.
 
-This is a full-stack To Do List application that enables users to register, log in, and manage their personal tasks securely.
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+![Passport.js](https://img.shields.io/badge/Passport.js-34E27A?style=for-the-badge&logo=passport&logoColor=white)
+![Google OAuth](https://img.shields.io/badge/Google%20OAuth-4285F4?style=for-the-badge&logo=google&logoColor=white)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
 
-Live Demo on Render: https://todolist-frontend-vlgb.onrender.com
+---
+## 🚀 Live Demo on Render
+https://todolist-frontend-vlgb.onrender.com
 
-Give it a try! 
+---
 
+## 📌 Features
 
-📌 Features
+- **Multi-strategy Authentication**
+  - Local username/password login (Passport.js + bcrypt)
+  - Google OAuth 2.0
+  - Internet Identity login (powered by Dfinity)
 
-User Authentication
+- **Personal Task Management**
+  - View, add, and delete, your own to-do cards after login
 
-- Local username/password login (with Passport.js)
-- Google OAuth 2.0, Internet Identity login (powered by Dfinity)
+- **Session Handling**
+  - PostgreSQL-backed session store
+  - Cookie settings respect dev/prod environments
 
-Personal Task Management
-- Add, delete, and view your own to-do cards after login
+---
 
-Session Management
-- Secure sessions via PostgreSQL-backed session store
-- Cookie-based session handling, works in both development and production environments
+## 🛠️ Tech Stack
 
+| Category        | Technology Used                          |
+|----------------|-------------------------------------------|
+| **Backend**        | Node.js, Express. (ES6)                         |
+| **Frontend**      | React (Vite)                                      |
+| **Authentication** | Passport.js, Google OAuth 2.0, Internet Identity, bcrypt  |
+| **Database**    | PostgreSQL                   |
+| **Session Store**    | PostgreSQL                   |
+| **Version Control** | Git & GitHub                             |
+| **Deployment**      | Render                                   |
 
-🛠️ Tech Stack
-- Frontend: React
-- Backend: Node.js, Express.js
-- Database: PostgreSQL
-- Security: The app uses sameSite and secure cookie options based on environment mode
-- Authentication: Passport.js (Local, Google OAuh 2.0, Internet Identity), bcrypt
-- Version control: Git & GitHub
-- Deployment: Render
+---
 
-📦 Installation
+## 💻 Installation & Setup 
 
-- Set up environment variables: 
+### Installation
+```bash
+# Backend setup
+cd backend
+npm install
+npm start
 
-inside frontend folder, create .env file with:     
-VITE_BACKEND_URL=your_backend_url  
-VITE_GOOGLE_CLIENT_ID=your_client_id  
+# Frontend setup
+cd frontend
+npm install
+npm run build
+```
+App runs on http://localhost:5173 and connects to backend API at http://localhost:3000.
 
-inside backend folder, create .env file with:    
-DATABASE_URL=your_db_url  
-GOOGLE_CLIENT_ID=your_client_id  
-GOOGLE_CLIENT_SECRET=your_google_client_secret  
-GOOGLE_CALLBACK_URL=your_google_cb_url  
-GOOGLE_CALLBACK_URL_LOCAL=your_google_cb_url_localhost  
-SESSION_SECRET=your_session_secret  
-FRONTEND_URL=your_frontend_url  
+### Environment Variables
+```bash
+# inside frontend folder, create .env file with:
+VITE_BACKEND_URL=your_backend_url
+VITE_GOOGLE_CLIENT_ID=your_client_id
 
-- Install dependencies by npm install. Users can run the app locally by npm start (backend from /backend folder) and npm run build (frontend from /frontend folder). 
+# inside backend folder, create .env file with:
+DATABASE_URL=your_db_url
+GOOGLE_CLIENT_ID=your_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GOOGLE_CALLBACK_URL=your_google_cb_url
+GOOGLE_CALLBACK_URL_LOCAL=your_google_cb_url_localhost
+SESSION_SECRET=your_session_secret
+FRONTEND_URL=your_frontend_url
+```
 
-- The app will then run on http://localhost:5173 and use http://localhost:3000 as the API server. 
-
-
-📜 Acknowledgment + License
-- This project is open-source and available under the MIT License.
