@@ -31,6 +31,13 @@ https://todolist-frontend-vlgb.onrender.com
   - Cookie settings respect dev/prod environments
 
 ---
+## 🎥 Live Demos
+ **Biometric Authentication**
+  - Using Touch ID as an example
+
+![Application Demo](./login.gif)
+
+---
 
 ## 🛠️ Tech Stack
 
