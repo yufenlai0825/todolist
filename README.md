@@ -25,14 +25,14 @@ https://todolist-frontend-vlgb.onrender.com
 
   - Local username/password login (Passport.js + bcrypt)
   - Google OAuth 2.0
-  - Internet Identity login (powered by Dfinity)
+  - Biometric authentication with Internet Identity (Dfinity)
 
 - **Personal Task Management**
 
   - View, add, and delete, your own to-do cards after login
 
 - **Session Handling**
-  - PostgreSQL-backed session store
+  - PostgreSQL-backed session storage
   - Cookie settings respect dev/prod environments
 
 ---
@@ -51,7 +51,7 @@ https://todolist-frontend-vlgb.onrender.com
 
 | Category            | Technology Used                                          |
 | ------------------- | -------------------------------------------------------- |
-| **Backend**         | Node.js, Express. (ES6)                                  |
+| **Backend**         | Node.js, Express.js                                      |
 | **Frontend**        | React (Vite)                                             |
 | **Authentication**  | Passport.js, Google OAuth 2.0, Internet Identity, bcrypt |
 | **Database**        | PostgreSQL                                               |
